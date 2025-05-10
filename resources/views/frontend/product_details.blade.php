@@ -57,17 +57,15 @@
 
     </style>
     <section class="pt-3">
-    
+       
 
         <div class="container">
             <div class="bg-white py-3">
                 <div class="row">
                     <!-- Product Image Gallery -->
                     <div class="col-xl-4 col-lg-4 mb-4">
-                        {{-- @include('frontend.product_details.image_gallery') --}}
+                      
                         <div class="sticky-top z-3 row gutters-10">
-
-                            <!-- Gallery Images -->
                             <div class="col-12">
                                 <div class="aiz-carousel product-gallery arrow-inactive-transparent arrow-lg-none"
                                     data-nav-for='.product-gallery-thumb' data-fade='true' data-auto-height='true'
@@ -218,10 +216,6 @@
                         </script>
                         @endif
                         
-                        
-                        {{-- @include('frontend.product_details.details') --}}
-
-                        <!-- Product Name -->
                         <div class="card-body p-1">
                             <h2 class="fs-16 fw-500 text-dark">
                                 {{ $detailedProduct['Title'] }}
@@ -237,9 +231,7 @@
                                                 class="fs-16 fw-700">{{ $featuredValues['rating'] }}</span>
                                         </span>
                                         <br>
-                                        {{-- @if ($featuredValues['reviews'])
-                                            <span class="ml-1 opacity-50 fs-14">({{$featuredValues['reviews'] .' '.translate('reviews') }})</span>
-                                            @endif --}}
+                                       
                                     </div>
                                 @endif
                                 @if (isset($featuredValues['SalesInLast30Days']))
@@ -339,10 +331,7 @@
                                         </tbody>
                                     </table>
 
-                                    <!-- View All/Show Less Button -->
-                                    <!--<div class="text-center viewButtonSection d-none">-->
-                                    <!--    <button type="button" class="btn btn-link text-decoration-none toggleViewBtn">View All</button>-->
-                                    <!--</div>-->
+                                 
                                 </div>
                             </div>
                         @else
@@ -486,9 +475,21 @@
                                 </div>
                                 {{-- <p>Domestic Shipping Charge: <span class="fw-700">৳</span><span class="shpping_charge">0.00</span></p> --}}
 
-                                <p class="mb-1">Shipping Charge: <span class="fw-700">৳</span><span
-                                        class="shpping_charge">0.00</span></p>
-                                <p>Delivery Time: <span class="delivery_days">0</span> days</p>
+                                @php
+                                    $cost = $shippingCost?->air_cost ?? 0.00;
+                                    $deliveryTime = $shippingCost?->air_delivery_time ?? 0;
+                                @endphp
+
+                                <p class="mb-1">
+                                    Shipping Charge: 
+                                    <span class="fw-700">৳</span>
+                                    <span class="shpping_charge">{{ number_format($cost, 2) }} /kg</span>
+                                </p>
+                                <p>
+                                    Delivery Time: 
+                                    <span class="delivery_days">{{ $deliveryTime }}</span> days
+                                </p>
+
 
                                 <hr>
                                 <h5>Total: <span class="fw-700">৳</span><span class="total_price">0.00</span></h5>
@@ -505,11 +506,7 @@
                                 </button>
                             </div>
                         </div>
-                        {{-- <div class="card p-3" style="border: 1px dashed red; border-radius: 5px;">
-                                <button type="button" class="btn btn-white" data-toggle="modal" data-target="#shippingChargeList">
-                                    ক্যাটাগরি ভিত্তিক শিপিং চার্জ দেখতে এখানে ক্লিক করুন
-                                </button>
-                            </div> --}}
+                       
 
                         <div class="card p-3" style="border: 1px dashed red; border-radius: 5px;">
                             <button type="button" class="btn btn-white fs-16" data-toggle="modal"
@@ -624,33 +621,7 @@
                                 </h3>
                             </div>
 
-                            <!-- Ratting -->
-                            {{-- <div class="px-3 px-sm-4 mb-4">
-                                <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-8 mb-3">
-                                            <div class="d-flex align-items-center justify-content-between justify-content-md-start">
-                                                <div class="w-100 w-sm-auto">
-                                                    <span class="fs-36 mr-3">{{ $featuredValues['rating'] }}</span>
-                                                    <span class="fs-14 mr-3">{{ translate('Out of 5.0') }}</span>
-                                                </div>
-                                                <div class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
-                                                    <span class="rating rating-mr-1">
-                                                        {{ renderStarRating($featuredValues['rating']) }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-4 text-right">
-                                            <a  href="javascript:void(0);" onclick="product_review('{{ $detailedProduct['Id'] }}')" class="btn btn-secondary-base fw-400 rounded-0 text-white">
-                                                <span class="d-md-inline-block"> {{ translate('Rate this Product') }}</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> --}}
-
+                         
                             <!-- Reviews -->
                             {{-- @include('frontend.product_details.reviews') --}}
                             <div class="py-3 reviews-area">
@@ -675,54 +646,19 @@
                                                 <!-- Review ratting -->
                                                 <span class="rating rating-mr-1">
                                                     {{ renderStarRating($review['Rating']) }}
-                                                    {{-- $review['Rating']  --}}
-
-                                                    {{-- @for ($i = 0; $i < $review->rating; $i++)
-                                                        <i class="las la-star active"></i>
-                                                    @endfor
-                                                    @for ($i = 0; $i < 5 - $review->rating; $i++)
-                                                        <i class="las la-star"></i>
-                                                    @endfor --}}
+                                                   
                                                 </span>
                                                 <!-- Review Comment -->
                                                 <p class="comment-text mt-2 fs-14">
                                                     {{ $review['Text'] }}
                                                 </p>
-                                                <!-- Review Images -->
-                                                {{-- <div class="spotlight-group d-flex flex-wrap">
-                                                    @if ($review->photos != null)
-                                                        @foreach (explode(',', $review->photos) as $photo)
-                                                        <a class="spotlight mr-2 mr-md-3 mb-2 mb-md-3 size-60px size-md-90px border overflow-hidden has-transition hov-scale-img hov-border-primary" href="{{ uploaded_asset($photo) }}">
-                                                            <img class="img-fit h-100 lazyload has-transition"
-                                                                    src="{{ static_asset('assets/img/placeholder.jpg') }}"
-                                                                    data-src="{{ uploaded_asset($photo) }}"
-                                                                    onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
-                                                        </a>
-                                                        @endforeach
-                                                    @endif
-                                                </div> --}}
-                                                <!-- Variation -->
-                                                {{-- @php
-                                                    $OrderDetail = get_order_details_by_review($review);
-                                                @endphp
-                                                @if ($OrderDetail && $OrderDetail->variation)
-                                                    <small class="text-secondary fs-12">{{ translate('Variation :') }} {{ $OrderDetail->variation }}</small>
-                                                @endif --}}
+                                               
                                             </div>
                                         </li>
                                     @endforeach
                                 </ul>
 
-                                {{-- @if (count($reviews) <= 0)
-                                    <div class="text-center fs-18 opacity-70">
-                                        {{ translate('There have been no reviews for this product yet.') }}
-                                    </div>
-                                @endif --}}
-
-                                {{-- <!-- Pagination -->
-                                <div class="aiz-pagination product-reviews-pagination py-2 px-4 d-flex justify-content-end">
-                                    {{ $reviews->links() }}
-                                </div> --}}
+                               
                             </div>
                         </div>
                     </div>
@@ -1549,38 +1485,38 @@ function addSeeLessButton(matchingItems) {
         const category = '{{ route('category_api') }}';
 
         function openShippingModal() {
-    const shippingCategories = @json($shippingCategories);
-    const totalWeight = document.querySelector('.total_weight').textContent.trim() || '0 KG';
-    const totalQuantity = document.querySelector('.total_quantity').textContent.trim() || '0';
+            const shippingCategories = @json($shippingCategories);
+            const totalWeight = document.querySelector('.total_weight').textContent.trim() || '0 KG';
+            const totalQuantity = document.querySelector('.total_quantity').textContent.trim() || '0';
 
-    document.getElementById('modalWeight').textContent = totalWeight;
-    document.getElementById('modalQuantity').textContent = totalQuantity;
+            document.getElementById('modalWeight').textContent = totalWeight;
+            document.getElementById('modalQuantity').textContent = totalQuantity;
 
-    const categorySelect = document.getElementById('category');
-    categorySelect.innerHTML = ''; // Clear existing options
+            const categorySelect = document.getElementById('category');
+            categorySelect.innerHTML = ''; // Clear existing options
 
-    // Add a default option
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = 'Select One';
-    defaultOption.disabled = true;
-    defaultOption.selected = true;
-    categorySelect.appendChild(defaultOption);
+            // Add a default option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select One';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            categorySelect.appendChild(defaultOption);
 
-    // Populate category options
-    shippingCategories.forEach(category => {
-        const option = document.createElement('option');
-        option.value = category.id;
-        option.textContent = category.name;
-        categorySelect.appendChild(option);
-    });
+            // Populate category options
+            shippingCategories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                categorySelect.appendChild(option);
+            });
 
-    // Refresh the selectpicker to enable live search
-    $('.selectpicker').selectpicker('refresh');
+            // Refresh the selectpicker to enable live search
+            $('.selectpicker').selectpicker('refresh');
 
-    // Show the modal
-    $('#shippingModal').modal('show');
-}
+            // Show the modal
+            $('#shippingModal').modal('show');
+        }
 
 
         function categoryInfo() {
@@ -1888,8 +1824,8 @@ function addSeeLessButton(matchingItems) {
             document.querySelector('.total_price').textContent = '0.00';
             document.querySelector('.total_quantity').textContent = '0';
             document.querySelector('.sub_total_price').textContent = '0.00';
-            document.querySelector('.shpping_charge').textContent = '0.00';
-            document.querySelector('.delivery_days').textContent = '0';
+           // document.querySelector('.shpping_charge').textContent = '0.00';
+           // document.querySelector('.delivery_days').textContent = '0';
         }
     </script>
 

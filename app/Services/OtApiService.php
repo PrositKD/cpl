@@ -88,7 +88,15 @@ class OtApiService
 
         return $result['CategoryInfoList']['Content'] ?? [];
     }
-
+    public function getParentCategories($CategoryId, $language = 'en')
+    {
+        $params = [
+            'categoryId' => $CategoryId,
+            'language' => $language,
+        ];
+        $result = $this->request('GetCategoryRootPath', $params);
+        return $result['CategoryInfoList']['Content'];
+    }
     public function searchItems(array $searchParams, $language = 'en', $framePosition, $frameSize, $blockList = '')
     {
         if (empty($searchParams)) {

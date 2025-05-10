@@ -77,14 +77,96 @@
                         </td>
                         <td class="text-right">
                             @can('edit_product_category')
-                                <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('categories.edit', ['id'=>$category->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" title="{{ translate('Edit') }}">
-                                    <i class="las la-edit"></i>
-                                </a>
-                            @endcan
+                            <!-- Edit Category Button -->
+                           <!-- Edit Button -->
+                            <a class="btn btn-soft-primary btn-icon btn-circle btn-sm"
+                            href="{{ route('categories.edit', ['id' => $category->id, 'lang' => env('DEFAULT_LANGUAGE')]) }}"
+                            title="{{ translate('Edit') }}">
+                            <i class="las la-edit"></i>
+                            </a>
+
+                            <!-- Add/Edit Shipping Cost Button -->
+                            <button type="button"
+                                class="btn btn-soft-primary btn-icon btn-circle btn-sm"
+                                data-toggle="modal"
+                                data-target="#shippingCostModal-{{ $category->id }}"
+                                title="{{ translate('Add/Edit Shipping Cost') }}">
+                            <i class="las la-shipping-fast"></i>
+                            </button>
+
+                            <div class="modal fade" id="shippingCostModal-{{ $category->id }}" tabindex="-1" role="dialog" aria-labelledby="shippingCostModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <form method="POST" action="{{ route('categories.shipping_cost_store', $category->id) }}">
+                                        @csrf
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Shipping Cost for {{ $category->name }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                            
+                                            @php
+                                                $cost = \App\Models\CategoryShippingCost::where('category_id', $category->id)->first();
+                                            @endphp
+                            
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="air_cost">Air Cost</label>
+                                                        <input type="number" step="0.01" name="air_cost" id="air_cost" class="form-control" value="{{ old('air_cost', $cost->air_cost ?? '') }}" required>
+                                                    </div>
+                            
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="airDeliveryTime">Air Delivery Time</label>
+                                                        <select id="airDeliveryTime" name="air_delivery_time" required class="form-control ">
+                                                            @foreach (['10 - 15','15 - 20','20 - 25','25 - 30','30 - 35','35 - 40','40 - 45','45 - 50','50 - 55','55 - 60','60 - 65','65 - 70','70 - 75','75 - 80','80 - 85','85 - 90','90 - 100'] as $range)
+                                                                <option value="{{ $range }}" @selected(($cost->air_delivery_time ?? '') == $range)>{{ $range }} days</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                            
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="ship_cost">Ship Cost</label>
+                                                        <input type="number" step="0.01" name="ship_cost" id="ship_cost" class="form-control" value="{{ old('ship_cost', $cost->ship_cost ?? '') }}" required>
+                                                    </div>
+                            
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="shipDeliveryTime">Ship Delivery Time</label>
+                                                        <select id="shipDeliveryTime" name="ship_delivery_time" required class="form-control ">
+                                                            @foreach (['10 - 15','15 - 20','20 - 25','25 - 30','30 - 35','35 - 40','40 - 45','45 - 50','50 - 55','55 - 60','60 - 65','65 - 70','70 - 75','75 - 80','80 - 85','85 - 90','90 - 100'] as $range)
+                                                                <option value="{{ $range }}" @selected(($cost->ship_delivery_time ?? '') == $range)>{{ $range }} days</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                            
+                                                    <div class="col-md-12 mb-3">
+                                                        <label for="origin">Origin</label>
+                                                        <select class="form-control " required name="origin" id="origin">
+                                                            <option value="CN" @selected(($cost->origin ?? '') == 'CN')>China</option>
+                                                            <option value="US" @selected(($cost->origin ?? '') == 'US')>USA</option>
+                                                            <option value="AE" @selected(($cost->origin ?? '') == 'AE')>UAE</option>
+                                                            <option value="IN" @selected(($cost->origin ?? '') == 'IN')>India</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                            
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Save</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                        @endcan
+                        
                             @can('delete_product_category')
-                                <a href="javascript:void(0)" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('categories.destroy', $category->id)}}" title="{{ translate('Delete') }}">
+                                {{-- <a href="javascript:void(0)" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('categories.destroy', $category->id)}}" title="{{ translate('Delete') }}">
                                     <i class="las la-trash"></i>
-                                </a>
+                                </a> --}}
                             @endcan
                         </td>
                     </tr>
@@ -96,11 +178,15 @@
         </div>
     </div>
 </div>
+
 @endsection
 
 
 @section('modal')
     @include('modals.delete_modal')
+    <!-- Shipping Cost Modal -->
+
+
 @endsection
 
 

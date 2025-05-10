@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Events\PasswordReset;
 use App\Mail\SecondEmailVerifyMailManager;
 use App\Models\Cart;
-use App\Models\RequestShip;
+use App\Models\CategoryShippingCost;
 use App\Models\ShippingCategory;
 use App\Services\OtApiService;
 use Illuminate\Support\Facades\Cache;
@@ -358,7 +358,22 @@ class HomeController extends Controller
     } else {
         $reviewsContent = [];
     }
+    $SubcategoryId=$detailedProduct['CategoryId'];
+    $cacheKeyReviews = 'product_parent_category_' . $SubcategoryId . '_page_' . $currentPage;
+    $ParentCategory = Cache::remember($cacheKeyReviews, now()->addDays(7), function () use ($SubcategoryId) {
+        return $this->otApiService->getParentCategories($SubcategoryId);
+    });
+    $lastCategory = end($ParentCategory);
+    $lastId = $lastCategory['Id'] ?? null;
+    $shippingCost = CategoryShippingCost::with('category')
+    ->whereHas('category', function ($query) use ($lastId) {
+        $query->where('CategoryId', $lastId);
+    })
+    ->first();
 
+
+    
+  // dd($shippingCosts);
     // Filter featured values
     $featuredValues = [];
     if (isset($detailedProduct['FeaturedValues'])) {
@@ -442,7 +457,8 @@ class HomeController extends Controller
         'reviewsContent', 
         'groupedAttributes',
         'shippingCategories',
-        'SimilerProducts'
+        'SimilerProducts',
+         'shippingCost'
     ));
 }
 

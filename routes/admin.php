@@ -61,6 +61,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/categories/status-change', 'statusChange')->name('categories.status_change');
         Route::post('/categories/top-category', 'topCategory')->name('categories.top_category');
         Route::post('/categories/categoriesByType', 'categoriesByType')->name('categories.categories-by-type');
+
+        Route::get('/categories/shipping-cost/{id}', 'shippingCostForm')->name('categories.shipping_cost_form');
+    Route::post('/categories/shipping-cost/{id}', 'storeShippingCost')->name('categories.shipping_cost_store');
     });
     // shipping category
     Route::controller(ShippingCategoryController::class)->group(function () {

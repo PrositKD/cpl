@@ -85,4 +85,10 @@ class Category extends Model
     {
         return $this->belongsTo(SizeChart::class, 'id', 'category_id');
     }
+
+    public function shippingCosts()
+    {
+        return $this->hasMany(CategoryShippingCost::class, 'category_id');
+    }
+
 }

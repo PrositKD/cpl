@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\CategoryShippingCost;
 use App\Models\Product;
 use App\Models\CategoryTranslation;
 use App\Utility\CategoryUtility;
@@ -191,4 +192,35 @@ class CategoryController extends Controller
 
         return response()->json(['success' => false, 'message' => 'Category not found.']);
     }
+    public function shippingCostForm($id)
+    {
+        $category = Category::findOrFail($id);
+        $shippingCost = CategoryShippingCost::where('category_id', $id)->first();
+       // return view('categories.shipping_cost_form', compact('category', 'shippingCost'));
+    }
+    public function storeShippingCost(Request $request, $categoryId)
+    {
+        $validated = $request->validate([
+            'air_cost' => 'required|numeric',
+            'air_delivery_time' => 'required|string|max:255',
+            'ship_cost' => 'required|numeric',
+            'ship_delivery_time' => 'required|string|max:255',
+            'origin' => 'required|string|max:255',
+        ]);
+    
+        CategoryShippingCost::updateOrCreate(
+            ['category_id' => $categoryId],
+            [
+                'air_cost' => $validated['air_cost'],
+                'air_delivery_time' => $validated['air_delivery_time'],
+                'ship_cost' => $validated['ship_cost'],
+                'ship_delivery_time' => $validated['ship_delivery_time'],
+                'origin' => $validated['origin'],
+            ]
+        );
+    
+        return back()->with('success', 'Shipping cost updated successfully.');
+    }
+
+
 }
